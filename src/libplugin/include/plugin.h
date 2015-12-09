@@ -1,14 +1,16 @@
 #pragma once
 #include <string>
-#include <vector>
+#include <map>
 
 class Plugin;
 
 class PluginHost
 {
+public:
+	Plugin* load_plugin(std::string filename);
+	bool unload_plugin(std::string name);
 protected:
-	std::vector<Plugin *> active_plugins;
-	bool load_plugin(std::string filename);
+	std::map<std::string, Plugin *> active_plugins;
 };
 
 class Plugin
@@ -16,4 +18,5 @@ class Plugin
 public:
 	virtual void init(PluginHost *h) = 0;
 	virtual void deinit(PluginHost *h) = 0;
+	virtual std::string name() = 0;
 };
