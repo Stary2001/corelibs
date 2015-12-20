@@ -7,7 +7,7 @@ Plugin* PluginHost::load_plugin(std::string filename)
 {
 	char* error = NULL;
 
-	void *handle = dlopen(filename.c_str(), RTLD_LAZY);
+	void *handle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_NODELETE);
 	if(handle == NULL)
 	{
 		return NULL;

@@ -169,6 +169,7 @@ int Connection::read(void* buf, int len)
 	if(l == 0)
 	{
 		std::cerr << "empty socket >:|" << std::endl;
+		exit(0);
 	}
 	return l;
 }
@@ -179,6 +180,7 @@ int Connection::write(const char* c, size_t l)
 	if(sent == 0)
 	{
 		std::cerr << "empty socket >:|" << std::endl;
+		exit(0);
 	}
 	return sent;
 }
