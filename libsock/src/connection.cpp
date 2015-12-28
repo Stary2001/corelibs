@@ -1,11 +1,12 @@
 #include <string>
+#include <iostream>
 #include <sys/types.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <netdb.h>
 #include "connection.h"
-#include <iostream>
+
 #include <errno.h>
 #include <unistd.h>
 
@@ -127,6 +128,11 @@ Connection::~Connection()
 
 void Connection::handle(uint32_t events)
 {
+    if((events & SocketEvent::ReadAvail) == 0)
+    {
+        return;
+    }
+
 	bool done = false;
 	while (1) // handles the simple connections
     {
@@ -149,7 +155,6 @@ void Connection::handle(uint32_t events)
 			break;
 		}
 
-		/*Write the buffer to standard output */
 		handle(buf, (uint32_t)count);
 	}
 	if(done)
@@ -160,7 +165,7 @@ void Connection::handle(uint32_t events)
 
 void Connection::handle(char *buf, uint32_t len)
 {
-	// ...
+	// ... k
 }
 
 int Connection::read(void* buf, int len)
@@ -235,16 +240,25 @@ void ConnectionDispatcher::handle()
 	for(; i < num; i++)
 	{
 		Connection* conn = ((Connection*) events[i].data.ptr);
+        uint32_t e = 0;
 
-		if((events[i].events & EPOLLERR) ||
-              (events[i].events & EPOLLHUP) ||
-              (!(events[i].events & EPOLLIN)))
+        if(events[i].events & EPOLLERR)
         {
-        	// err
+            e |= SocketEvent::Error;
         }
-		else
-		{
-			conn->handle(events[i].events);
-		}
+        else if((events[i].events & EPOLLHUP) || (events[i].events & EPOLLRDHUP))
+        {
+            e |= SocketEvent::Hangup;
+        }
+        else if(events[i].events & EPOLLIN)
+        {
+            e |= SocketEvent::ReadAvail;
+        }
+        else if(events[i].events & EPOLLOUT)
+        {
+            e |= SocketEvent::WriteAvail;
+        }
+
+		conn->handle(e);
 	}
 }
