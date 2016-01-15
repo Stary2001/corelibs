@@ -1,3 +1,4 @@
 *.a
+*.lib
 *.o
 build

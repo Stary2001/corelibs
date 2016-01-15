@@ -14,6 +14,10 @@ LineConnection::~LineConnection()
 	delete[] scratch;
 }
 
+#ifdef WIN32
+const void* memmem(const void *l, size_t l_len, const void *s, size_t s_len);
+#endif
+
 void LineConnection::handle(uint32_t events)
 {
 	if(events & SocketEvent::Hangup) // if server disconnected, die. f.
@@ -39,7 +43,7 @@ void LineConnection::handle(uint32_t events)
 
 		char *line_end = NULL;
 		bool found = false;
-		int len = 0;
+		uint32_t len = 0;
 		char *last_line_end = NULL;
 
 		while(true)
@@ -50,7 +54,7 @@ void LineConnection::handle(uint32_t events)
 			{
 				if(found)
 				{
-					len = scratch_len - (last_line_end+2 - scratch);
+					len = scratch_len - (uint32_t)(last_line_end+2 - scratch);
 					memmove(scratch, last_line_end + 2, len);
 					memset(scratch + len, 0, SCRATCH_LENGTH - len);
 					scratch_off = 0;
@@ -60,7 +64,7 @@ void LineConnection::handle(uint32_t events)
 			}
 
 			found = true;
-			len = (line_end - scratch) - scratch_off;
+			len = (uint32_t)(line_end - scratch) - scratch_off;
 			std::string line(scratch + scratch_off, len);
 			handle_line(line);
 
@@ -70,3 +74,33 @@ void LineConnection::handle(uint32_t events)
 		
 	}
 }
+
+#ifdef WIN32
+const void * memmem(const void *l, size_t l_len, const void *s, size_t s_len)
+{
+	register char *cur, *last;
+	const char *cl = (const char *)l;
+	const char *cs = (const char *)s;
+
+	/* we need something to compare */
+	if (l_len == 0 || s_len == 0)
+		return NULL;
+
+	/* "s" must be smaller or equal to "l" */
+	if (l_len < s_len)
+		return NULL;
+
+	/* special case where s_len == 1 */
+	if (s_len == 1)
+		return memchr(l, (int)*cs, l_len);
+
+	/* the last position where its possible to find "s" in "l" */
+	last = (char *)cl + l_len - s_len;
+
+	for (cur = (char *)cl; cur <= last; cur++)
+		if (cur[0] == cs[0] && memcmp(cur, cs, s_len) == 0)
+			return cur;
+
+	return NULL;
+}
+#endif
