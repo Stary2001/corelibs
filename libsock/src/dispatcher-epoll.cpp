@@ -1,5 +1,8 @@
 #ifndef WIN32
 
+#include "connection.h"
+#include <iostream>
+
 ConnectionDispatcher::ConnectionDispatcher()
 {
 	m_epoll_fd = epoll_create(1);
