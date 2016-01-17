@@ -1,10 +1,11 @@
 #pragma once
 #include <string>
 #include <map>
+#include "export.h"
 
 class Plugin;
 
-class PluginHost
+PLUGINCLASS PluginHost
 {
 public:
 	Plugin* load_plugin(std::string filename);
@@ -13,7 +14,7 @@ protected:
 	std::map<std::string, Plugin *> active_plugins;
 };
 
-class Plugin
+PLUGINCLASS Plugin
 {
 public:
 	virtual void init(PluginHost *h) = 0;

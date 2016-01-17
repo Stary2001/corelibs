@@ -1,8 +1,9 @@
 #include "connection.h"
+#include "export.h"
 
 #define SCRATCH_LENGTH 1024
 
-class LineConnection : public Connection
+class PLUGINEXPORT LineConnection : public Connection
 {
 public:
 	LineConnection(std::string host, unsigned short port);

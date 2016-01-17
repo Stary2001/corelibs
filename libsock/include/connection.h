@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "socketevent.h"
+#include "export.h"
 
 #ifdef WIN32
 #include "sock-windows.h"
@@ -12,7 +13,7 @@
 #endif
 
 class ConnectionDispatcher;
-class Connection
+PLUGINCLASS Connection
 {
 	friend class ConnectionDispatcher;
 public:
@@ -30,7 +31,7 @@ protected:
 	ConnectionDispatcher *dispatcher;
 };
 
-class ConnectionDispatcher
+PLUGINCLASS ConnectionDispatcher
 {
 public:
         ConnectionDispatcher();
@@ -47,8 +48,8 @@ private:
 };
 
 
-class EpollException : std::exception
+PLUGINCLASS EpollException : public std::exception
 {};
 
-class SocketException : std::exception
+PLUGINCLASS SocketException : public std::exception
 {};
