@@ -17,6 +17,7 @@ protected:
 PLUGINCLASS Plugin
 {
 public:
+	virtual ~Plugin() {};
 	virtual void init(PluginHost *h) = 0;
 	virtual void deinit(PluginHost *h) = 0;
 	virtual std::string name() = 0;

@@ -3,6 +3,11 @@
 #include <stdint.h>
 #include <vector>
 #include <map>
+#include <gnutls/gnutls.h>
+#include <gnutls/gnutlsxx.h>
+
+#define CAFILE "/etc/ssl/certs/ca-certificates.crt"
+
 #include "socketevent.h"
 #include "export.h"
 
@@ -29,6 +34,11 @@ public:
 	sock_type m_fd;
 protected:
 	ConnectionDispatcher *dispatcher;
+	void start_ssl();
+    bool ssl;
+private:
+	gnutls_session_t session;
+    std::string host;
 };
 
 PLUGINCLASS ConnectionDispatcher
