@@ -44,17 +44,18 @@ private:
 PLUGINCLASS ConnectionDispatcher
 {
 public:
-        ConnectionDispatcher();
-        void add(Connection *conn);
-        void remove(Connection *conn);
-        void handle();
+    ConnectionDispatcher();
+    void add(Connection *conn);
+    void remove(Connection *conn);
+    void handle();
+	int count();
 private:
         int m_epoll_fd;
 #ifdef WIN32
 		std::vector<WSAPOLLFD> m_fds;
 		std::map < sock_type, Connection*> m_conns;
 #endif
-		
+		int m_count;
 };
 
 

@@ -5,6 +5,7 @@
 
 ConnectionDispatcher::ConnectionDispatcher()
 {
+    m_count = 0;
 	m_epoll_fd = epoll_create(1);
 	if (m_epoll_fd == -1)
 	{
@@ -25,10 +26,12 @@ void ConnectionDispatcher::add(Connection *conn)
 		throw EpollException();
 	}
 	conn->dispatcher = this;
+    m_count++;
 }
 
 void ConnectionDispatcher::remove(Connection *conn)
 {
+    m_count--;
 	if (epoll_ctl(m_epoll_fd, EPOLL_CTL_DEL, conn->m_fd, NULL) != 0)
 	{
 		std::cerr << "errno " << errno << std::endl;
@@ -74,6 +77,11 @@ void ConnectionDispatcher::handle()
 
 		conn->handle(e);
 	}
+}
+
+int ConnectionDispatcher::count()
+{
+	return m_count;
 }
 
 #endif

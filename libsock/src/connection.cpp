@@ -195,6 +195,4 @@ void Connection::start_ssl()
     {
         throw SocketException();
     }
-
-    
 }

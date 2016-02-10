@@ -4,13 +4,16 @@
 #include <iostream>
 
 ConnectionDispatcher::ConnectionDispatcher()
-{}
+{
+    m_count = 0;
+}
 
 void ConnectionDispatcher::add(Connection *conn)
 {
 	m_fds.push_back({ conn->m_fd, POLLRDNORM | POLLWRNORM, 0 });
 	m_conns[conn->m_fd] = conn;
 	conn->dispatcher = this;
+    m_count++;
 }
 
 void ConnectionDispatcher::remove(Connection *conn)
@@ -32,6 +35,7 @@ void ConnectionDispatcher::remove(Connection *conn)
 	m_conns.erase(conn->m_fd);
 
 	conn->dispatcher = NULL;
+    m_count++;
 }
 
 void ConnectionDispatcher::handle()
@@ -72,4 +76,10 @@ void ConnectionDispatcher::handle()
 		conn->handle(e);
 	}
 }
+
+int ConnectionDispatcher::count()
+{
+    return m_count;
+}
+
 #endif
