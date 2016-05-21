@@ -41,6 +41,13 @@ typedef void *(* plugin_callback)(void*); // plugin_callback;
 
 Plugin* PluginHost::load_plugin(std::string filename)
 {
+	for(auto ext : extensions)
+	{
+		if(filename.substr(filename.length() - ext.first.length()) == ext.first)
+		{
+			return ext.second(filename);
+		}
+	}
 	char* error = NULL;
 
 	void *handle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_NODELETE);
@@ -78,4 +85,9 @@ bool PluginHost::unload_plugin(std::string name)
 	{
 		return false;
 	}
+}
+
+void PluginHost::add_extension_handler(std::string ext, PluginCallback p)
+{
+	extensions[ext] = p;
 }

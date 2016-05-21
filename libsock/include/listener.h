@@ -51,7 +51,7 @@ template <class ConnType> int Listener<ConnType>::create_listening_socket(std::s
 
 template <class ConnType> void Listener<ConnType>::handle(uint32_t events)
 {
-        if(events & EPOLLIN)
+    if(events & SocketEvent::ReadAvail)
 	{
 		sockaddr_in addr;
 		socklen_t addr_len = sizeof(sockaddr_in);
